@@ -140,6 +140,12 @@ class Pico {
 		return $content;
 	}
 
+	private function parse_excerpt_content($content){
+		$content = preg_replace('/#+[^#]*#+/', '', $content); // Remove comments and meta
+		return $this->parse_content($content);
+	}
+
+
 	/**
 	 * Parses the file meta from the txt file header
 	 *
@@ -236,8 +242,9 @@ class Pico {
 			}
 			// Get title and format $page
 			$page_content = file_get_contents($page);
-			$page_meta = $this->read_file_meta($page_content);
+			$page_meta = $this->read_file_meta($page_content);			
 			if(!$page_meta) trigger_error("$page meta not read");
+			$page_excerpt_content = $this->parse_excerpt_content($page_content);
 			$page_content = $this->parse_content($page_content);
 			$url = str_replace(CONTENT_DIR, $base_url .'/', $page);
 			$url = str_replace('index'. CONTENT_EXT, '', $url);
@@ -252,7 +259,7 @@ class Pico {
 				'url' => $url,
 				'date_formatted' => isset($page_meta['date']) ? date($config['date_format'], strtotime($page_meta['date'])) : null,
 				'content' => $page_content,
-				'excerpt' => $this->limit_words(strip_tags($page_content), $excerpt_length)
+				'excerpt' => $this->limit_words(strip_tags($page_excerpt_content), $excerpt_length)
 			);
 			$data = array_merge($data, $extras);
 			if($order_by == 'date' && isset($page_meta['date'])){
