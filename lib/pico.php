@@ -243,7 +243,6 @@ class Pico {
 			// Get title and format $page
 			$page_content = file_get_contents($page);
 			$page_meta = $this->read_file_meta($page_content);			
-			if(!$page_meta) trigger_error("$page meta not read");
 			$page_excerpt_content = $this->parse_excerpt_content($page_content);
 			$page_content = $this->parse_content($page_content);
 			$url = str_replace(CONTENT_DIR, $base_url .'/', $page);
